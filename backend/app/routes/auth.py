@@ -3,8 +3,9 @@ from sqlalchemy.orm import Session
 
 from app.database import SessionLocal
 from app.models.user import User
-from app.schemas.user import UserCreate, UserResponse
-from app.core.security import hash_password
+from app.schemas.user import UserCreate, UserResponse, UserLogin, TokenResponse
+from app.core.security import hash_password, verify_password, create_access_token
+from datetime import timedelta
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -51,3 +52,27 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     db.refresh(db_user)
 
     return db_user
+
+@router.post("/login", response_model=TokenResponse)
+def login_user(credentials: UserLogin, db: Session = Depends(get_db)):
+    """
+    Authenticate user and return JWT.
+    """
+
+    user = db.query(User).filter(User.username == credentials.username).first()
+
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    if not verify_password(credentials.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    access_token = create_access_token(
+        data={"sub": user.username},
+        expires_delta=timedelta(minutes=60)
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }

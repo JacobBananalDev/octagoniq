@@ -24,3 +24,18 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+        
+class UserLogin(BaseModel):
+    """
+    Schema for login.
+    """
+    
+    username: str
+    password: str
+    
+class TokenResponse(BaseModel):
+    """
+    JWT token response.
+    """
+    access_token: str
+    token_type: str
