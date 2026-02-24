@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.fighter import Fighter
-from app.schemas.fighter import FighterCreate, FighterResponse
+from app.schemas.fighter import FighterCreate, FighterResponse, FighterUpdate
 from typing import List
 
 # Create a router instance
@@ -130,3 +130,36 @@ def delete_fighter(fighter_id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return
+
+@router.patch("/fighters/{fighter_id}", response_model=FighterResponse)
+def update_fighter(
+    fighter_id: int,
+    fighter_update: FighterUpdate,
+    db: Session = Depends(get_db)
+):
+    """
+    Partially update a fighter.
+
+    Only fields provided in request body will be updated.
+    """
+
+    fighter = db.query(Fighter).filter(Fighter.id == fighter_id).first()
+
+    if fighter is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Fighter not found"
+        )
+
+    # Extract only provided fields (exclude unset ones)
+    # use model_dump for Pydantic v2
+    update_data = fighter_update.model_dump(exclude_unset=True)
+
+    # Loop through fields and update dynamically
+    for key, value in update_data.items():
+        setattr(fighter, key, value)
+
+    db.commit()
+    db.refresh(fighter)
+
+    return fighter

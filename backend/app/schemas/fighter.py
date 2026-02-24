@@ -50,3 +50,21 @@ class FighterResponse(BaseModel):
         # Allows Pydantic to read data directly from SQLAlchemy ORM objects
         # Instead of requiring a dictionary, it can accept model instances
         from_attributes = True
+        
+class FighterUpdate(BaseModel):
+    """
+    Schema for updating a fighter.
+
+    All fields are optional.
+    Only provided fields will be updated.
+    """
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    nickname: Optional[str] = None
+    date_of_birth: Optional[date] = None
+    height_cm: Optional[int] = None
+    reach_cm: Optional[int] = None
+    stance: Optional[str] = None
+    wins: Optional[int] = None
+    losses: Optional[int] = None
+    draws: Optional[int] = None
