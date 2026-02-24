@@ -5,7 +5,7 @@ from app.database import Base, engine
 from app.models.fighter import Fighter
 from app.models.event import Event
 from app.models.fight import Fight
-from app.routes import fighter, event
+from app.routes import fighter, event, fight
 
 # Create an instance of the FastAPI application
 # This is the main entrypoint of our API
@@ -16,6 +16,7 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(fighter.router)
 app.include_router(event.router)
+app.include_router(fight.router)
 
 
 # Define a simple GET route at the root URL "/"
