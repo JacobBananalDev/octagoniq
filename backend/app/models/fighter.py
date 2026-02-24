@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Date
+from sqlalchemy.orm import relationship
 from app.database import Base
 
 
@@ -33,3 +34,15 @@ class Fighter(Base):
     wins = Column(Integer, default=0)
     losses = Column(Integer, default=0)
     draws = Column(Integer, default=0)
+    
+    fights_as_fighter_1 = relationship(
+        "Fight",
+        foreign_keys="Fight.fighter_1_id",
+        back_populates="fighter_1"
+    )
+
+    fights_as_fighter_2 = relationship(
+        "Fight",
+        foreign_keys="Fight.fighter_2_id",
+        back_populates="fighter_2"
+    )

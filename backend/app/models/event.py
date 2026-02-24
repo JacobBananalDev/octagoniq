@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Date
+from sqlalchemy.orm import relationship
 from app.database import Base
 
 class Event(Base):
@@ -22,3 +23,6 @@ class Event(Base):
     name = Column(String, nullable=True) # Example: UFC 300
     location = Column(String, nullable=True) #Example: Las Vegas, NV
     event_date = Column(Date, nullable=False)
+    
+     # One event has many fights
+    fights = relationship("Fight", back_populates="event")

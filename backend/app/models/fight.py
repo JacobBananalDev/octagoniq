@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
 from app.database import Base
 
 
@@ -30,3 +31,23 @@ class Fight(Base):
 
     method = Column(String, nullable=True)   # KO, Submission, Decision
     round = Column(Integer, nullable=True)
+    
+    # ORM (Object-Relational Mapping) Relationships
+    event = relationship("Event", back_populates="fights")
+
+    fighter_1 = relationship(
+        "Fighter",
+        foreign_keys=[fighter_1_id],
+        back_populates="fights_as_fighter_1"
+    )
+
+    fighter_2 = relationship(
+        "Fighter",
+        foreign_keys=[fighter_2_id],
+        back_populates="fights_as_fighter_2"
+    )
+
+    winner = relationship(
+        "Fighter",
+        foreign_keys=[winner_id]
+    )
