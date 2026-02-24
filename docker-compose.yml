@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: octagoniq_db
+    restart: always
+    environment:
+      POSTGRES_USER: octagon
+      POSTGRES_PASSWORD: octagonpass
+      POSTGRES_DB: octagoniq
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: octagoniq_backend
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://octagon:octagonpass@db:5432/octagoniq
+
+volumes:
+  postgres_data:

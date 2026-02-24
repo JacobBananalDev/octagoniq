@@ -1,0 +1,30 @@
+# Use official lightweight Python image
+# This is our base operating system + Python runtime
+FROM python:3.12-slim
+
+# Set the working directory inside the container
+# All commands below will run inside /app
+WORKDIR /app
+
+# Copy dependency file first
+# We copy this before the source code to leverage Docker layer caching
+# If requirements.txt doesn't change, Docker won't reinstall dependencies
+COPY requirements.txt .
+
+# Install Python dependencies inside the container
+# --no-cache-dir prevents pip from storing cache (keeps image smaller)
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Now copy the actual application source code
+# We copy the app folder into /app/app inside the container
+COPY app ./app
+
+# Command to run when the container starts
+# - uvicorn runs the FastAPI server
+# - app.main:app means:
+#     folder: app
+#     file: main.py
+#     object inside file: app
+# - 0.0.0.0 allows the container to accept external connections
+# - port 8000 is exposed by docker-compose
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
