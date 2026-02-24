@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from sqlalchemy import text
 from app.database import Base, engine
 from app.models.fighter import Fighter
+from app.routes import fighter
 
 # Create an instance of the FastAPI application
 # This is the main entrypoint of our API
@@ -10,6 +11,8 @@ app = FastAPI()
 
 # Create tables in the database (if they don't already exist)
 Base.metadata.create_all(bind=engine)
+
+app.include_router(fighter.router)
 
 
 # Define a simple GET route at the root URL "/"
