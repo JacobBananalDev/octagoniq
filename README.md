@@ -49,29 +49,36 @@ The backend is being developed using clean modular architecture with separated l
 ```bash
 git clone https://github.com/YOUR_USERNAME/octagoniq.git
 cd octagoniq/backend
-2. Create a Virtual Environment
+```
+### 2. Create a Virtual Environment
+```bash
 python -m venv venv
-3. Activate the Virtual Environment
+```
+### 3. Activate the Virtual Environment
 
 Windows:
-
+```bash
 venv\Scripts\activate
-
+```
 Mac/Linux:
-
+```bash
 source venv/bin/activate
-4. Install Dependencies
+```
+### 4. Install Dependencies
+```bash
 pip install -r requirements.txt
-5. Run the API
+```
+### 5. Run the API
+```bash
 uvicorn app.main:app --reload
-
+```
 Visit:
 
 API root: http://localhost:8000
 
 Swagger docs: http://localhost:8000/docs
 
-📍 Roadmap
+## 📍 Roadmap
 
  FastAPI foundation
 
@@ -87,7 +94,7 @@ Swagger docs: http://localhost:8000/docs
 
  Frontend analytics dashboard
 
-📌 Status
+## 📌 Status
 
 🚧 Backend foundation in progress
 Actively expanding into database modeling and infrastructure design.
