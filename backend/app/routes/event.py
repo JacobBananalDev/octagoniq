@@ -4,7 +4,7 @@ from typing import List
 
 from app.database import SessionLocal
 from app.models.event import Event
-from app.schemas.event import EventCreate, EventResponse
+from app.schemas.event import EventCreate, EventResponse, EventWithFightsResponse
 
 # Create router instance for grouping Event endpoints
 router = APIRouter()
@@ -57,7 +57,7 @@ def get_events(db: Session = Depends(get_db)):
     return db.query(Event).all()
 
 
-@router.get("/events/{event_id}", response_model=EventResponse)
+@router.get("/events/{event_id}", response_model=EventWithFightsResponse)
 def get_event(event_id: int, db: Session = Depends(get_db)):
     """
     Retrieve a single Event by ID.

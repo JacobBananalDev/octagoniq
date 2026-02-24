@@ -1,16 +1,17 @@
 from pydantic import BaseModel
 from datetime import date
-from typing import Optional
+from typing import Optional, List
 
+from app.schemas.fight import FightNestedResponse
+
+
+# -------------------------
+# Create Schema
+# -------------------------
 
 class EventCreate(BaseModel):
     """
-    Schema used when creating a new Event.
-
-    Defines:
-    - What fields the client must provide
-    - Expected types
-    - Validation rules
+    Schema for creating an Event.
     """
 
     name: str
@@ -18,13 +19,13 @@ class EventCreate(BaseModel):
     event_date: date
 
 
+# -------------------------
+# Basic Event Response
+# -------------------------
+
 class EventResponse(BaseModel):
     """
-    Schema returned to the client when sending Event data.
-
-    Controls:
-    - What fields are exposed
-    - JSON structure of response
+    Flat Event response (no fights included).
     """
 
     id: int
@@ -33,5 +34,24 @@ class EventResponse(BaseModel):
     event_date: date
 
     class Config:
-        # Allows Pydantic to serialize SQLAlchemy ORM objects directly
+        from_attributes = True
+
+
+# -------------------------
+# Nested Event Response
+# -------------------------
+
+class EventWithFightsResponse(BaseModel):
+    """
+    Event response including nested fights and fighters.
+    """
+
+    id: int
+    name: str
+    location: Optional[str] = None
+    event_date: date
+
+    fights: List[FightNestedResponse] = []
+
+    class Config:
         from_attributes = True
