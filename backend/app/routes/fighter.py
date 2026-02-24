@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.fighter import Fighter
@@ -70,3 +70,24 @@ def get_fighters(db: Session = Depends(get_db)):
     fighters = db.query(Fighter).all()
     
     return fighters
+
+@router.get("/fighters/{fighter_id}", response_model=FighterResponse)
+def get_fighter_by_id(fighter_id: int, db: Session = Depends(get_db)):
+    """
+    Retrieve a single fighter by ID.
+
+    - If fighter exists → return 200 with fighter data.
+    - If fighter does not exist → return 404 Not Found.
+    """
+
+    # Query database for fighter with matching ID
+    fighter = db.query(Fighter).filter(Fighter.id == fighter_id).first()
+
+    # If no fighter found, raise proper HTTP error
+    if fighter is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Fighter not found"
+        )
+
+    return fighter
