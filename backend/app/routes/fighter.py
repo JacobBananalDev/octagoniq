@@ -4,6 +4,8 @@ from app.database import SessionLocal
 from app.models.fighter import Fighter
 from app.schemas.fighter import FighterCreate, FighterResponse, FighterUpdate
 from typing import List
+from app.core.dependencies import get_current_user
+from app.models.user import User
 
 # Create a router instance
 # This allows us to group fighter-related endpoints
@@ -29,7 +31,10 @@ def get_db():
 
 
 @router.post("/fighters", response_model=FighterResponse, status_code=201)
-def create_fighter(fighter: FighterCreate, db: Session = Depends(get_db)):
+def create_fighter(
+    fighter: FighterCreate, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)):
     """
     Create a new fighter in the database.
 
