@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.fighter import Fighter
 from app.schemas.fighter import FighterCreate, FighterResponse
+from typing import List
 
 # Create a router instance
 # This allows us to group fighter-related endpoints
@@ -55,3 +56,17 @@ def create_fighter(fighter: FighterCreate, db: Session = Depends(get_db)):
 
     # Return the ORM object (FastAPI converts using response_model)
     return db_fighter
+
+@router.get("/fighters", response_model=List[FighterResponse])
+def get_fighters(db: Session = Depends(get_db)):
+    """
+    Retrieve all fighters from the database.
+
+    Returns:
+        A list of FighterResponse objects.
+    """
+    
+    # Query all fighter records
+    fighters = db.query(Fighter).all()
+    
+    return fighters
