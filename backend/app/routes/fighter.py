@@ -107,3 +107,26 @@ def get_fighter_by_id(fighter_id: int, db: Session = Depends(get_db)):
         )
 
     return fighter
+
+@router.delete("/fighters/{fighter_id}", status_code=204)
+def delete_fighter(fighter_id: int, db: Session = Depends(get_db)):
+    """
+    Delete a fighter by ID.
+
+    Returns:
+    - 204 No Content if deleted successfully
+    - 404 Not Found if fighter does not exist
+    """
+
+    fighter = db.query(Fighter).filter(Fighter.id == fighter_id).first()
+
+    if fighter is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Fighter not found"
+        )
+
+    db.delete(fighter)
+    db.commit()
+
+    return
