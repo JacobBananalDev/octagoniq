@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import List
 
 from app.database import SessionLocal
 from app.models.event import Event
+from app.models.fight import Fight
 from app.schemas.event import EventCreate, EventResponse, EventWithFightsResponse
 
 # Create router instance for grouping Event endpoints
@@ -67,7 +68,19 @@ def get_event(event_id: int, db: Session = Depends(get_db)):
     - 404 if not found
     """
 
-    event = db.query(Event).filter(Event.id == event_id).first()
+    event = (
+    db.query(Event)
+    .options(
+        joinedload(Event.fights)
+        .joinedload(Fight.fighter_1),
+        joinedload(Event.fights)
+        .joinedload(Fight.fighter_2),
+        joinedload(Event.fights)
+        .joinedload(Fight.winner),
+    )
+    .filter(Event.id == event_id)
+    .first()
+    )
 
     if event is None:
         raise HTTPException(
