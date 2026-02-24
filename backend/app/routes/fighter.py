@@ -58,16 +58,26 @@ def create_fighter(fighter: FighterCreate, db: Session = Depends(get_db)):
     return db_fighter
 
 @router.get("/fighters", response_model=List[FighterResponse])
-def get_fighters(db: Session = Depends(get_db)):
+def get_fighters(
+    skip: int = 0,
+    limit: int = 10,
+    db: Session = Depends(get_db)
+):
     """
     Retrieve all fighters from the database.
+    
+    Query Parameters:
+    - skip: number of records to skip (offset)
+    - limit: maximum number of records to return
 
     Returns:
         A list of FighterResponse objects.
     """
     
     # Query all fighter records
-    fighters = db.query(Fighter).all()
+    # offset = sql equivalent to OFFSET ?
+    # limit = sql equivalent to LIMIT ?
+    fighters = db.query(Fighter).offset(skip).limit(limit).all()
     
     return fighters
 
