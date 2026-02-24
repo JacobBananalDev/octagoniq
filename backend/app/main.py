@@ -1,11 +1,15 @@
 # Import FastAPI class from the fastapi library
 from fastapi import FastAPI
 from sqlalchemy import text
-from app.database import engine
+from app.database import Base, engine
+from app.models.fighter import Fighter
 
 # Create an instance of the FastAPI application
 # This is the main entrypoint of our API
 app = FastAPI()
+
+# Create tables in the database (if they don't already exist)
+Base.metadata.create_all(bind=engine)
 
 
 # Define a simple GET route at the root URL "/"
