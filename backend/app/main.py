@@ -4,6 +4,7 @@ from sqlalchemy import text
 from app.database import Base, engine
 from app.models.fighter import Fighter
 from app.models.event import Event
+from app.models.fight import Fight
 from app.routes import fighter
 
 # Create an instance of the FastAPI application
