@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.fighter import Fighter
@@ -59,16 +59,22 @@ def create_fighter(fighter: FighterCreate, db: Session = Depends(get_db)):
 
 @router.get("/fighters", response_model=List[FighterResponse])
 def get_fighters(
-    skip: int = 0,
-    limit: int = 10,
+    skip: int = Query(0, ge=10),
+    limit: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db)
 ):
     """
     Retrieve all fighters from the database.
     
-    Query Parameters:
-    - skip: number of records to skip (offset)
-    - limit: maximum number of records to return
+   Query Parameters:
+    - skip: must be >= 0
+    - limit: must be between 1 and 100
+    
+    ge = greater than or equal to
+    le = less than or equal to
+
+    FastAPI will automatically return 422
+    if values fall outside allowed range.
 
     Returns:
         A list of FighterResponse objects.
