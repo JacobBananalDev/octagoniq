@@ -4,7 +4,7 @@ from app.database import SessionLocal
 from app.models.fighter import Fighter
 from app.schemas.fighter import FighterCreate, FighterResponse, FighterUpdate
 from typing import List
-from app.core.dependencies import get_current_user
+from app.core.dependencies import require_admin
 from app.models.user import User
 
 # Create a router instance
@@ -34,7 +34,7 @@ def get_db():
 def create_fighter(
     fighter: FighterCreate, 
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)):
+    current_user: User = Depends(require_admin)):
     """
     Create a new fighter in the database.
 
@@ -117,7 +117,7 @@ def get_fighter_by_id(fighter_id: int, db: Session = Depends(get_db)):
 def delete_fighter(
     fighter_id: int, 
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin)
 ):
     """
     Delete a fighter by ID.
@@ -145,7 +145,7 @@ def update_fighter(
     fighter_id: int,
     fighter_update: FighterUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin)
 ):
     """
     Partially update a fighter.
