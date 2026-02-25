@@ -9,3 +9,5 @@ bcrypt==4.0.1
 python-multipart
 pydantic-settings
 alembic
+pytest
+httpx
