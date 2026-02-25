@@ -1,79 +1,59 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 from typing import List
 
 from app.database import get_db
-from app.models.event import Event
-from app.models.fight import Fight
-from app.schemas.event import EventCreate, EventResponse, EventWithFightsResponse
+from app.schemas.event import EventCreate, EventResponse
 from app.core.dependencies import require_admin
 from app.models.user import User
+from app.services import event_service
 
-# Create router instance for grouping Event endpoints
+# Router groups all event-related endpoints
 router = APIRouter()
 
 
 @router.post("/events", response_model=EventResponse, status_code=201)
 def create_event(
-    event: EventCreate, 
+    event: EventCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin)
+    current_user: User = Depends(require_admin),
 ):
     """
-    Create a new Event.
+    Create a new event (admin only).
 
-    Steps:
-    1. Receive validated EventCreate schema.
-    2. Convert to SQLAlchemy model.
-    3. Add to session.
-    4. Commit transaction.
-    5. Refresh to get generated ID.
+    Route responsibility:
+    - Validate input
+    - Enforce authorization
+    - Call service layer
+    - Return result
     """
 
-    # Convert validated schema into ORM model
-    db_event = Event(**event.model_dump())
-
-    db.add(db_event)
-    db.commit()
-    db.refresh(db_event)
-
-    return db_event
+    return event_service.create_event(db, event)
 
 
 @router.get("/events", response_model=List[EventResponse])
 def get_events(db: Session = Depends(get_db)):
     """
-    Retrieve all events from the database.
+    Retrieve all events (public endpoint).
+
+    No authentication required.
     """
 
-    return db.query(Event).all()
+    return event_service.get_all_events(db)
 
 
-@router.get("/events/{event_id}", response_model=EventWithFightsResponse)
-def get_event(event_id: int, db: Session = Depends(get_db)):
+@router.get("/events/{event_id}", response_model=EventResponse)
+def get_event_by_id(event_id: int, db: Session = Depends(get_db)):
     """
-    Retrieve a single Event by ID.
+    Retrieve a specific event by ID.
 
-    Returns:
-    - 200 with Event data if found
-    - 404 if not found
+    - Returns 200 if found.
+    - Returns 404 if not found.
     """
 
-    event = (
-    db.query(Event)
-    .options(
-        joinedload(Event.fights)
-        .joinedload(Fight.fighter_1),
-        joinedload(Event.fights)
-        .joinedload(Fight.fighter_2),
-        joinedload(Event.fights)
-        .joinedload(Fight.winner),
-    )
-    .filter(Event.id == event_id)
-    .first()
-    )
+    event = event_service.get_event_by_id(db, event_id)
 
-    if event is None:
+    if not event:
         raise HTTPException(
             status_code=404,
             detail="Event not found"
@@ -84,25 +64,23 @@ def get_event(event_id: int, db: Session = Depends(get_db)):
 
 @router.delete("/events/{event_id}", status_code=204)
 def delete_event(
-    event_id: int, 
+    event_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin)
+    current_user: User = Depends(require_admin),
 ):
     """
-    Delete an Event by ID.
+    Delete an event (admin only).
 
-    Returns:
-    - 204 No Content if deleted
-    - 404 if Event does not exist
+    - Returns 204 if deleted.
+    - Returns 404 if not found.
     """
 
-    event = db.query(Event).filter(Event.id == event_id).first()
+    event = event_service.delete_event(db, event_id)
 
-    if event is None:
+    if not event:
         raise HTTPException(
             status_code=404,
             detail="Event not found"
         )
 
-    db.delete(event)
-    db.commit()
+    return
