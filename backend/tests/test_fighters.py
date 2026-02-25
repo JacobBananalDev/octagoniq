@@ -12,7 +12,8 @@ def test_create_fighter(client, admin_token):
     }
 
     response = client.post("/fighters", json=payload, headers=headers)
-
+    print(response.status_code, response.json())
+    
     assert response.status_code == 201
 
     data = response.json()
@@ -22,7 +23,7 @@ def test_create_fighter(client, admin_token):
     assert data["reach_cm"] == 84
     assert data["stance"] == "Southpaw"
     
-def test_create_and_get_fighter(client):
+def test_create_and_get_fighter(client, admin_token):
     payload = {
         "first_name": "Khabib",
         "last_name": "Nurmagomedov",
@@ -30,9 +31,13 @@ def test_create_and_get_fighter(client):
         "height_cm": 190,
         "reach_cm": 188
     }
+    
+    headers = {
+        "Authorization": f"Bearer {admin_token}"
+    }
 
     # Create fighter
-    create_response = client.post("/fighters", json=payload)
+    create_response = client.post("/fighters", json=payload, headers=headers)
     assert create_response.status_code == 201
 
     fighter_id = create_response.json()["id"]
@@ -50,15 +55,24 @@ def test_get_nonexistent_fighter(client):
     assert response.status_code == 404
     assert response.json()["detail"] == "Fighter not found"
     
-def test_get_fighters_pagination(client):
+def test_get_fighters_pagination(client, admin_token):
+    headers = {
+        "Authorization": f"Bearer {admin_token}"
+    }
+
     # Create 3 fighters
     for i in range(3):
-        client.post("/fighters", json={
-            "first_name": f"Test{i}",
-            "last_name": "Fighter",
-            "height_cm": 190,
-            "reach_cm": 70
-        })
+        response = client.post(
+            "/fighters",
+            json={
+                "first_name": f"Test{i}",
+                "last_name": "Fighter",
+                "height_cm": 190,
+                "reach_cm": 70
+            },
+            headers=headers
+        )
+        assert response.status_code == 201
 
     response = client.get("/fighters?skip=1&limit=1")
     assert response.status_code == 200
