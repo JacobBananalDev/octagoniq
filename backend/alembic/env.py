@@ -8,7 +8,7 @@ from app.database import Base
 from app.core.settings import settings
 
 # IMPORTANT: Import all models so Alembic can detect tables
-from app.models import fighter, event, fight, user
+import app.models
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
