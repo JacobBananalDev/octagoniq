@@ -22,6 +22,8 @@ services:
       - db
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend:/app
     environment:
       DATABASE_URL: postgresql://octagon:octagonpass@db:5432/octagoniq
       SECRET_KEY: supersecretkey123
