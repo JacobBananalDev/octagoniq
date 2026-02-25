@@ -68,7 +68,10 @@ def login_user(credentials: UserLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     access_token = create_access_token(
-        data={"sub": user.username},
+        data={
+            "sub": user.username,
+            "role": user.role
+        },
         expires_delta=timedelta(minutes=60)
     )
 
