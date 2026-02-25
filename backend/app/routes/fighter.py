@@ -114,7 +114,11 @@ def get_fighter_by_id(fighter_id: int, db: Session = Depends(get_db)):
     return fighter
 
 @router.delete("/fighters/{fighter_id}", status_code=204)
-def delete_fighter(fighter_id: int, db: Session = Depends(get_db)):
+def delete_fighter(
+    fighter_id: int, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     """
     Delete a fighter by ID.
 
@@ -140,7 +144,8 @@ def delete_fighter(fighter_id: int, db: Session = Depends(get_db)):
 def update_fighter(
     fighter_id: int,
     fighter_update: FighterUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """
     Partially update a fighter.

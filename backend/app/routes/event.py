@@ -6,6 +6,8 @@ from app.database import SessionLocal
 from app.models.event import Event
 from app.models.fight import Fight
 from app.schemas.event import EventCreate, EventResponse, EventWithFightsResponse
+from app.core.dependencies import get_current_user
+from app.models.user import User
 
 # Create router instance for grouping Event endpoints
 router = APIRouter()
@@ -27,7 +29,11 @@ def get_db():
 
 
 @router.post("/events", response_model=EventResponse, status_code=201)
-def create_event(event: EventCreate, db: Session = Depends(get_db)):
+def create_event(
+    event: EventCreate, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     """
     Create a new Event.
 
@@ -92,7 +98,11 @@ def get_event(event_id: int, db: Session = Depends(get_db)):
 
 
 @router.delete("/events/{event_id}", status_code=204)
-def delete_event(event_id: int, db: Session = Depends(get_db)):
+def delete_event(
+    event_id: int, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     """
     Delete an Event by ID.
 

@@ -7,6 +7,8 @@ from app.models.fight import Fight
 from app.models.fighter import Fighter
 from app.models.event import Event
 from app.schemas.fight import FightCreate, FightResponse
+from app.core.dependencies import get_current_user
+from app.models.user import User
 
 router = APIRouter()
 
@@ -20,7 +22,11 @@ def get_db():
 
 
 @router.post("/fights", response_model=FightResponse, status_code=201)
-def create_fight(fight: FightCreate, db: Session = Depends(get_db)):
+def create_fight(
+    fight: FightCreate, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     """
     Create a Fight with validation:
     - Event must exist
