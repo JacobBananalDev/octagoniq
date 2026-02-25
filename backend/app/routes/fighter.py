@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from app.database import SessionLocal
+from app.database import get_db
 from app.models.fighter import Fighter
 from app.schemas.fighter import FighterCreate, FighterResponse, FighterUpdate
 from typing import List
@@ -10,24 +10,6 @@ from app.models.user import User
 # Create a router instance
 # This allows us to group fighter-related endpoints
 router = APIRouter()
-
-
-# Dependency to provide a database session per request
-def get_db():
-    """
-    Creates a new database session for each request.
-
-    Yields:
-        db (Session): Active SQLAlchemy session
-
-    Ensures:
-        The session is properly closed after the request finishes.
-    """
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @router.post("/fighters", response_model=FighterResponse, status_code=201)

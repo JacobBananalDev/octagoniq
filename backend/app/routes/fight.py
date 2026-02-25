@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
-from app.database import SessionLocal
+from app.database import get_db
 from app.models.fight import Fight
 from app.models.fighter import Fighter
 from app.models.event import Event
@@ -11,15 +11,6 @@ from app.core.dependencies import require_admin
 from app.models.user import User
 
 router = APIRouter()
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 @router.post("/fights", response_model=FightResponse, status_code=201)
 def create_fight(

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
 from typing import List
 
-from app.database import SessionLocal
+from app.database import get_db
 from app.models.event import Event
 from app.models.fight import Fight
 from app.schemas.event import EventCreate, EventResponse, EventWithFightsResponse
@@ -11,21 +11,6 @@ from app.models.user import User
 
 # Create router instance for grouping Event endpoints
 router = APIRouter()
-
-
-def get_db():
-    """
-    Dependency that provides a database session per request.
-
-    Ensures:
-    - A fresh session is created
-    - The session is properly closed after the request
-    """
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @router.post("/events", response_model=EventResponse, status_code=201)

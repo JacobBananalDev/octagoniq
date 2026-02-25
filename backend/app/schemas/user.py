@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional
+from typing import Optional, Literal
 
 
 class UserCreate(BaseModel):
@@ -39,3 +39,10 @@ class TokenResponse(BaseModel):
     """
     access_token: str
     token_type: str
+    
+class UserRoleUpdate(BaseModel):
+    """
+    Literal restricts valid role, prevents invalid role injection, and makes
+    schema self-validating
+    """
+    role: Literal["user", "admin"]
