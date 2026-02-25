@@ -25,7 +25,11 @@ jobs:
           --health-retries=5
 
     env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
       TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+      SECRET_KEY: testsecretkey
+      ACCESS_TOKEN_EXPIRE_MINUTES: 60
+      ALGORITHM: HS256
 
     steps:
       - name: Checkout code
