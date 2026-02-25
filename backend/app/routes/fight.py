@@ -1,61 +1,35 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
 
 from app.database import get_db
-from app.models.fight import Fight
-from app.models.fighter import Fighter
-from app.models.event import Event
 from app.schemas.fight import FightCreate, FightResponse
 from app.core.dependencies import require_admin
 from app.models.user import User
+from app.services import fight_service
 
 router = APIRouter()
 
+
 @router.post("/fights", response_model=FightResponse, status_code=201)
 def create_fight(
-    fight: FightCreate, 
+    fight: FightCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin)
+    current_user: User = Depends(require_admin),
 ):
     """
-    Create a Fight with validation:
-    - Event must exist
-    - Fighters must exist
-    - Fighters cannot be the same person
+    Create fight (admin only).
     """
 
-    # Validate event exists
-    event = db.query(Event).filter(Event.id == fight.event_id).first()
-    if event is None:
-        raise HTTPException(status_code=404, detail="Event not found")
+    result = fight_service.create_fight(db, fight)
 
-    # Validate fighter 1 exists
-    fighter_1 = db.query(Fighter).filter(Fighter.id == fight.fighter_1_id).first()
-    if fighter_1 is None:
-        raise HTTPException(status_code=404, detail="Fighter 1 not found")
+    # If service returned error dict, convert to HTTPException
+    if isinstance(result, dict) and "error" in result:
 
-    # Validate fighter 2 exists
-    fighter_2 = db.query(Fighter).filter(Fighter.id == fight.fighter_2_id).first()
-    if fighter_2 is None:
-        raise HTTPException(status_code=404, detail="Fighter 2 not found")
+        error_message = result["error"]
 
-    # Prevent same fighter fighting themselves
-    if fight.fighter_1_id == fight.fighter_2_id:
-        raise HTTPException(
-            status_code=400,
-            detail="A fighter cannot fight themselves"
-        )
+        if "not found" in error_message.lower():
+            raise HTTPException(status_code=404, detail=error_message)
 
-    # Optional: validate winner exists if provided
-    if fight.winner_id is not None:
-        winner = db.query(Fighter).filter(Fighter.id == fight.winner_id).first()
-        if winner is None:
-            raise HTTPException(status_code=404, detail="Winner not found")
+        raise HTTPException(status_code=400, detail=error_message)
 
-    db_fight = Fight(**fight.model_dump())
-    db.add(db_fight)
-    db.commit()
-    db.refresh(db_fight)
-
-    return db_fight
+    return result
