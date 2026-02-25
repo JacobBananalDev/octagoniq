@@ -11,3 +11,5 @@ venv/
 
 # Docker
 *.db
+
+.env
