@@ -1,157 +1,92 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from app.database import get_db
-from app.models.fighter import Fighter
-from app.schemas.fighter import FighterCreate, FighterResponse, FighterUpdate
 from typing import List
+
+from app.database import get_db
+from app.schemas.fighter import FighterCreate, FighterResponse, FighterUpdate
 from app.core.dependencies import require_admin
 from app.models.user import User
+from app.services import fighter_service
 
-# Create a router instance
-# This allows us to group fighter-related endpoints
 router = APIRouter()
 
 
 @router.post("/fighters", response_model=FighterResponse, status_code=201)
 def create_fighter(
-    fighter: FighterCreate, 
+    fighter: FighterCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin)):
+    current_user: User = Depends(require_admin),
+):
     """
-    Create a new fighter in the database.
-
-    Steps:
-    1. Receive validated data from FighterCreate schema.
-    2. Convert schema into SQLAlchemy model.
-    3. Add model instance to session.
-    4. Commit transaction.
-    5. Refresh instance to get generated ID.
-    6. Return clean response schema.
+    Create a new fighter (admin only).
     """
 
-    # Convert Pydantic schema into SQLAlchemy model instance
-    db_fighter = Fighter(**fighter.dict())
+    return fighter_service.create_fighter(db, fighter)
 
-    # Add the new fighter to the session
-    db.add(db_fighter)
-
-    # Commit the transaction (persist to database)
-    db.commit()
-
-    # Refresh the instance to load generated fields (like id)
-    db.refresh(db_fighter)
-
-    # Return the ORM object (FastAPI converts using response_model)
-    return db_fighter
 
 @router.get("/fighters", response_model=List[FighterResponse])
 def get_fighters(
-    skip: int = Query(0, ge=10),
+    skip: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=100),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """
-    Retrieve all fighters from the database.
-    
-   Query Parameters:
-    - skip: must be >= 0
-    - limit: must be between 1 and 100
-    
-    ge = greater than or equal to
-    le = less than or equal to
-
-    FastAPI will automatically return 422
-    if values fall outside allowed range.
-
-    Returns:
-        A list of FighterResponse objects.
+    Retrieve paginated list of fighters.
     """
-    
-    # Query all fighter records
-    # offset = sql equivalent to OFFSET ?
-    # limit = sql equivalent to LIMIT ?
-    fighters = db.query(Fighter).offset(skip).limit(limit).all()
-    
-    return fighters
+
+    fighters = fighter_service.get_all_fighters(db)
+    return fighters[skip : skip + limit]
+
 
 @router.get("/fighters/{fighter_id}", response_model=FighterResponse)
-def get_fighter_by_id(fighter_id: int, db: Session = Depends(get_db)):
+def get_fighter_by_id(
+    fighter_id: int,
+    db: Session = Depends(get_db),
+):
     """
     Retrieve a single fighter by ID.
-
-    - If fighter exists → return 200 with fighter data.
-    - If fighter does not exist → return 404 Not Found.
     """
 
-    # Query database for fighter with matching ID
-    fighter = db.query(Fighter).filter(Fighter.id == fighter_id).first()
+    fighter = fighter_service.get_fighter_by_id(db, fighter_id)
 
-    # If no fighter found, raise proper HTTP error
-    if fighter is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Fighter not found"
-        )
+    if not fighter:
+        raise HTTPException(status_code=404, detail="Fighter not found")
 
     return fighter
 
-@router.delete("/fighters/{fighter_id}", status_code=204)
-def delete_fighter(
-    fighter_id: int, 
-    db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin)
-):
-    """
-    Delete a fighter by ID.
-
-    Returns:
-    - 204 No Content if deleted successfully
-    - 404 Not Found if fighter does not exist
-    """
-
-    fighter = db.query(Fighter).filter(Fighter.id == fighter_id).first()
-
-    if fighter is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Fighter not found"
-        )
-
-    db.delete(fighter)
-    db.commit()
-
-    return
 
 @router.patch("/fighters/{fighter_id}", response_model=FighterResponse)
 def update_fighter(
     fighter_id: int,
     fighter_update: FighterUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin)
+    current_user: User = Depends(require_admin),
 ):
     """
-    Partially update a fighter.
-
-    Only fields provided in request body will be updated.
+    Update fighter (admin only).
     """
 
-    fighter = db.query(Fighter).filter(Fighter.id == fighter_id).first()
+    fighter = fighter_service.update_fighter(db, fighter_id, fighter_update)
 
-    if fighter is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Fighter not found"
-        )
-
-    # Extract only provided fields (exclude unset ones)
-    # use model_dump for Pydantic v2
-    update_data = fighter_update.model_dump(exclude_unset=True)
-
-    # Loop through fields and update dynamically
-    for key, value in update_data.items():
-        setattr(fighter, key, value)
-
-    db.commit()
-    db.refresh(fighter)
+    if not fighter:
+        raise HTTPException(status_code=404, detail="Fighter not found")
 
     return fighter
+
+
+@router.delete("/fighters/{fighter_id}", status_code=204)
+def delete_fighter(
+    fighter_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+):
+    """
+    Delete fighter (admin only).
+    """
+
+    fighter = fighter_service.delete_fighter(db, fighter_id)
+
+    if not fighter:
+        raise HTTPException(status_code=404, detail="Fighter not found")
+
+    return
