@@ -26,7 +26,8 @@ jobs:
 
     env:
       TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
-
+      PYTHONPATH: ./backend
+      
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
