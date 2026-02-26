@@ -33,84 +33,52 @@ This project demonstrates:
 ---
 
 ## 🏗 System Architecture
-
-[ Client ]
-     ↓
-[ FastAPI Application Layer ]
-     ↓
-[ Service Layer ]
-     ↓
-[ SQLAlchemy ORM ]
-     ↓
-[ PostgreSQL Database ]
+![System Architecture](docs/images/architecture.png)
 
 ## 📂 Project Structure
-OCTAGONIQ/
-│
-├── .github/                 # GitHub Actions workflows
-│
-├── backend/
-│   ├── app/
-│   │   ├── routes/          # API endpoints
-│   │   ├── models/          # SQLAlchemy models
-│   │   ├── schemas/         # Pydantic schemas
-│   │   ├── core/            # Security, settings, dependencies
-│   │   ├── services/        # Business logic layer
-│   │   ├── database.py      # Engine & session management
-│   │   └── main.py          # FastAPI application instance
-│   │
-│   ├── alembic/             # Database migrations
-│   ├── tests/               # Pytest integration tests
-│   ├── Dockerfile
-│   ├── alembic.ini
-│   ├── pyproject.toml
-│   └── requirements.txt
-│
-├── docker-compose.yml
-├── docs/
-└── README.md
+![Project Structure](docs/images/project-structure.png)
 
 ##  🔐 Authentication & Authorization
 
 OctagonIQ implements:
 
-OAuth2 password flow
+* OAuth2 password flow
 
-JWT access tokens
+* JWT access tokens
 
-Password hashing with bcrypt
+* Password hashing with bcrypt
 
-Role-based access control (admin / user)
+* Role-based access control (admin / user)
 
-Dependency-based authorization guards
+* Dependency-based authorization guards
 
-Protected endpoints (e.g., creating fighters) require admin privileges.
+* Protected endpoints (e.g., creating fighters) require admin privileges.
 
 ## 🧪 Testing & CI
 
 The backend includes:
 
-Pytest integration tests
+* Pytest integration tests
 
-Isolated test database
+* Isolated test database
 
-Schema reset before each test
+* Schema reset before each test
 
-Dependency override for database sessions
+* Dependency override for database sessions
 
-GitHub Actions CI pipeline
+* GitHub Actions CI pipeline
 
 CI validates:
 
-Authentication flows
+* Authentication flows
 
-Role-based access control
+* Role-based access control
 
-Protected endpoints
+* Protected endpoints
 
-Pagination logic
+* Pagination logic
 
-Health check endpoints 
+* Health check endpoints 
 
 ---
 
