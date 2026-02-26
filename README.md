@@ -33,10 +33,10 @@ This project demonstrates:
 ---
 
 ## 🏗 System Architecture
-![System Architecture](docs/images/architecture.png)
+![System Architecture](https://github.com/JacobBananalDev/octagoniq/blob/main/docs/images/architecture.PNG)
 
 ## 📂 Project Structure
-![Project Structure](docs/images/project-structure.png)
+![Project Structure](https://github.com/JacobBananalDev/octagoniq/blob/main/docs/images/project-structure.PNG)
 
 ##  🔐 Authentication & Authorization
 
