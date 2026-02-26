@@ -4,19 +4,19 @@ OctagonIQ is a production-grade MMA analytics backend engineered with modern Pyt
 
 This project demonstrates:
 
-Clean modular backend architecture
+* Clean modular backend architecture
 
-JWT authentication & role-based access control
+* JWT authentication & role-based access control
 
-Relational database modeling with SQLAlchemy
+* Relational database modeling with SQLAlchemy
 
-Containerized development with Docker
+* Containerized development with Docker
 
-Automated testing with Pytest
+* Automated testing with Pytest
 
-Continuous Integration via GitHub Actions
+* Continuous Integration via GitHub Actions
 
-Cloud-ready infrastructure planning (AWS + Terraform)
+* Cloud-ready infrastructure planning (AWS + Terraform)
 
 ---
 
@@ -34,31 +34,33 @@ Cloud-ready infrastructure planning (AWS + Terraform)
 
 ## 🏗 System Architecture
 
-Client
-↓
-FastAPI (Uvicorn)
-↓
-SQLAlchemy ORM
-↓
-PostgreSQL (Docker Container)
+[ Client ]
+     ↓
+[ FastAPI Application Layer ]
+     ↓
+[ Service Layer ]
+     ↓
+[ SQLAlchemy ORM ]
+     ↓
+[ PostgreSQL Database ]
 
 ## 📂 Project Structure
 OCTAGONIQ/
 │
-├── .github/                # GitHub Actions CI workflows
+├── .github/                 # GitHub Actions workflows
 │
 ├── backend/
 │   ├── app/
-│   │   ├── routes/         # API endpoints
-│   │   ├── models/         # SQLAlchemy models
-│   │   ├── schemas/        # Pydantic schemas
-│   │   ├── core/           # Security, settings, dependencies
-│   │   ├── services/       # Business logic layer
-│   │   ├── database.py     # Engine & session management
-│   │   └── main.py         # FastAPI app instance
+│   │   ├── routes/          # API endpoints
+│   │   ├── models/          # SQLAlchemy models
+│   │   ├── schemas/         # Pydantic schemas
+│   │   ├── core/            # Security, settings, dependencies
+│   │   ├── services/        # Business logic layer
+│   │   ├── database.py      # Engine & session management
+│   │   └── main.py          # FastAPI application instance
 │   │
-│   ├── alembic/            # Database migrations
-│   ├── tests/              # Pytest integration tests
+│   ├── alembic/             # Database migrations
+│   ├── tests/               # Pytest integration tests
 │   ├── Dockerfile
 │   ├── alembic.ini
 │   ├── pyproject.toml
@@ -185,23 +187,23 @@ uvicorn app.main:app --reload
 
 Current relational entities:
 
-Users
+* Users
 
-Fighters
+* Fighters
 
-Fights
+* Fights
 
-Events
+* Events
 
 Designed to support:
 
-Historical performance tracking
+* Historical performance tracking
 
-Matchup modeling
+* Matchup modeling
 
-Statistical aggregation
+* Statistical aggregation
 
-Future predictive intelligence engine
+* Future predictive intelligence engine
 
 ## 📍 Roadmap
 
@@ -231,15 +233,15 @@ Future predictive intelligence engine
 
 Upcoming infrastructure:
 
-AWS EC2
+* AWS EC2
 
-AWS RDS (PostgreSQL)
+* AWS RDS (PostgreSQL)
 
-Dockerized backend
+* Dockerized backend
 
-Terraform-managed infrastructure
+* Terraform-managed infrastructure
 
-IAM-based security model
+* IAM-based security model
 
 ## 📈 Future Enhancements
 
