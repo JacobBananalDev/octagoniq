@@ -1,8 +1,22 @@
 # 🥊 OctagonIQ
 
-OctagonIQ is a production-grade MMA analytics backend platform engineered to manage fighter data, fight history, and predictive intelligence through a scalable API architecture.
+OctagonIQ is a production-grade MMA analytics backend engineered with modern Python backend architecture. It manages fighters, events, fights, and authentication through a secure, containerized API designed for scalability and cloud deployment.
 
-This project demonstrates real-world backend engineering principles, including relational database modeling, containerized development, and cloud-ready infrastructure planning.
+This project demonstrates:
+
+Clean modular backend architecture
+
+JWT authentication & role-based access control
+
+Relational database modeling with SQLAlchemy
+
+Containerized development with Docker
+
+Automated testing with Pytest
+
+Continuous Integration via GitHub Actions
+
+Cloud-ready infrastructure planning (AWS + Terraform)
 
 ---
 
@@ -20,7 +34,6 @@ This project demonstrates real-world backend engineering principles, including r
 
 ## 🏗 System Architecture
 
-
 Client
 ↓
 FastAPI (Uvicorn)
@@ -29,15 +42,73 @@ SQLAlchemy ORM
 ↓
 PostgreSQL (Docker Container)
 
+## 📂 Project Structure
+OCTAGONIQ/
+│
+├── .github/                # GitHub Actions CI workflows
+│
+├── backend/
+│   ├── app/
+│   │   ├── routes/         # API endpoints
+│   │   ├── models/         # SQLAlchemy models
+│   │   ├── schemas/        # Pydantic schemas
+│   │   ├── core/           # Security, settings, dependencies
+│   │   ├── services/       # Business logic layer
+│   │   ├── database.py     # Engine & session management
+│   │   └── main.py         # FastAPI app instance
+│   │
+│   ├── alembic/            # Database migrations
+│   ├── tests/              # Pytest integration tests
+│   ├── Dockerfile
+│   ├── alembic.ini
+│   ├── pyproject.toml
+│   └── requirements.txt
+│
+├── docker-compose.yml
+├── docs/
+└── README.md
 
-The backend follows clean modular architecture:
+##  🔐 Authentication & Authorization
 
-- `routes/` → API endpoints  
-- `models/` → Database tables  
-- `schemas/` → Request/response validation  
-- `database.py` → Database engine & session management  
-- `Dockerfile` → Backend container configuration  
-- `docker-compose.yml` → Multi-container orchestration  
+OctagonIQ implements:
+
+OAuth2 password flow
+
+JWT access tokens
+
+Password hashing with bcrypt
+
+Role-based access control (admin / user)
+
+Dependency-based authorization guards
+
+Protected endpoints (e.g., creating fighters) require admin privileges.
+
+## 🧪 Testing & CI
+
+The backend includes:
+
+Pytest integration tests
+
+Isolated test database
+
+Schema reset before each test
+
+Dependency override for database sessions
+
+GitHub Actions CI pipeline
+
+CI validates:
+
+Authentication flows
+
+Role-based access control
+
+Protected endpoints
+
+Pagination logic
+
+Health check endpoints 
 
 ---
 
@@ -110,57 +181,96 @@ pip install -r requirements.txt
 ```bash
 uvicorn app.main:app --reload
 ```
-## 🧠 Vision
+## 🧠 Domain Model
 
-OctagonIQ will evolve into a full MMA analytics engine capable of:
+Current relational entities:
 
-Managing structured fighter data
+Users
 
-Modeling fight events and matchups
+Fighters
 
-Storing advanced performance statistics
+Fights
 
-Powering predictive fight analysis
+Events
 
-Deploying to AWS using Infrastructure as Code (Terraform)
+Designed to support:
 
-Supporting a future frontend analytics dashboard
+Historical performance tracking
+
+Matchup modeling
+
+Statistical aggregation
+
+Future predictive intelligence engine
 
 ## 📍 Roadmap
 
- FastAPI foundation
+✅ FastAPI foundation
 
- PostgreSQL containerization
+✅ PostgreSQL containerization
 
- Docker multi-service architecture
+✅ Docker multi-service setup
 
- Relational schema modeling (Fighters, Events, Fights)
+✅ JWT authentication
 
- Prediction engine layer
+✅ Role-based access control
 
- AWS deployment via Terraform
+✅ Pytest test suite
 
- Frontend analytics dashboard
+✅ CI with GitHub Actions
 
-## 📌 Current Status
+⏳ Advanced fight analytics
 
-🚧 Backend core infrastructure complete.
-Now expanding into relational modeling and domain implementation.
+⏳ AWS deployment
 
-## 📈 Future Expansion
+⏳ Terraform infrastructure automation
 
-JWT authentication
+⏳ Frontend analytics dashboard
 
-Role-based access control
+## ☁️ Cloud Deployment (Planned)
 
-ML-powered prediction service
+Upcoming infrastructure:
 
-CI/CD with GitHub Actions
+AWS EC2
 
-AWS ECS + RDS deployment
+AWS RDS (PostgreSQL)
 
-Infrastructure automation via Terraform
+Dockerized backend
+
+Terraform-managed infrastructure
+
+IAM-based security model
+
+## 📈 Future Enhancements
+
+Global exception handling
+
+Structured logging middleware
+
+Request ID tracing
+
+Rate limiting
+
+Async SQLAlchemy layer
+
+ELO ranking algorithm
+
+ML-powered fight prediction engine
 
 ## 👨‍💻 Author
 
-Built as a backend engineering portfolio project to demonstrate scalable API architecture, database modeling, and cloud-ready system design.
+OctagonIQ is a backend engineering portfolio project designed to demonstrate:
+
+Secure API architecture
+
+Clean separation of concerns
+
+Database modeling
+
+Containerized development
+
+Automated testing
+
+CI/CD integration
+
+Cloud deployment readiness
